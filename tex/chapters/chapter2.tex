@@ -1,0 +1,452 @@
+\chapter{Reinforcement Learning}
+
+%============================= INTRODUCTION =================================
+\lettrine[lines=2]{T}his chapter aims to introduce the reader to the problem of model-free Reinforcement Learning
+by providing a clear formalization of the main key concepts and the notation that
+will be used in the rest of the thesis. Moreover in the final part we introduce Fitted Q-Iteration, the
+state of the art for solving Batch RL problems.
+
+\section{Markov Decision Processes}
+	\noindent In our context a task is identified as a discrete-time Markov Decision Process (abbreviated as MDP).\newline
+	An MDP can be formalized as a tupe $<\mathcal{S},\mathcal{A},\mathcal{P},\mathcal{R},\gamma>$ where:
+
+	\begin{itemize}
+		\item $\mathcal{S}$ is the set of the states (we assume it to be finite).
+		\item $\mathcal{A}$ is the set of all possible actions in every states (we assume it to be finite)
+		\item $\mathcal{P} \mathcal{: S} \times \mathcal{A} \rightarrow \Pi(\mathcal{S})$ is the transition model that
+					assign to each state-action pair a probability ditribution($\Pi$) over the state space.
+		\item $\mathcal{R} \mathcal{: S} \times \mathcal{A} \rightarrow \Pi(\mathbb{R})$ is the reward function that
+					assign to each state-action pair a probability distribution over $\mathbb{R}$.
+		\item $\gamma \in [0,1]$ is the discount factor, which determine the sensibility of the agent toward future rewards.
+	\end{itemize}
+
+	\noindent At each time step the agent interacts with the external environment according to
+	its current policy, $\pi \mathcal{: S} \rightarrow \Pi(\mathcal{A})$, which given
+	a state return a probability distribution over the action space.\newline
+	How the agent can learn a policy? The objective of the agent is to maximize the
+	expected sum of discounted rewards, that means to learn a policy $\pi^*$
+	that leads to the maximization of the \textit{utility} of the agent in each state of the MDP.\newline
+
+	\begin{definition}[Bellman Operator for $V$]
+		Given a policy $\pi$ and a function $V: \mathcal{S} \rightarrow \mathbb{R}$, the Bellman operator $\mathcal{T}$ is defined as:
+		\begin{equation}
+			(\mathcal{T}^{\pi}V^{\pi})(s) = \sum_{a \in \mathcal{A}} \pi(a|s) \left ( r(s,a) + \gamma \sum_{s' \in \mathcal{S}} P(s'|s,a)V^{\pi}(s) \right )
+		\end{equation}
+
+	\end{definition}
+
+	\noindent In a MDP the concept of utility can be formalized introducing the definition of \textit{value function}:
+	\begin{definition}[Value Function]
+		The state–value function $V^{\pi}(s)$ of an MDP is the expected returns starting from state $s$, and then following policy $\pi$. It
+		is defined as the unique solution of the following Bellman equation:
+		\begin{equation}
+			\mathcal{T}^{\pi}V^{\pi} = V^{\pi}
+		\end{equation}
+		which is a fixed point for the Bellman operator $\mathcal{T}$.
+	\end{definition}
+
+	\noindent Given an MDP the agent is interested in learning a policy that maximizes $V(s)$ in all the states $s$, that is:
+	\begin{equation}
+		V^*(s) = \max_{\pi} V^{\pi}(s) = \max_{a \in \mathcal{A}} \left \{ R(s,a) + \gamma \sum_{s^{'} \in \mathcal{S}} \mathcal{P}(s^{'} | s,a) V^{*}(s^{'}) \right \}
+		\label{bellmanOptV}
+	\end{equation}
+	where $R(s,a) = \mathbb{E}[\mathcal{R}(s,a)]$\newline
+	Equation~\ref{bellmanOptV} is also known as Bellman optimality equation for $V$.\newline
+
+	\noindent However for control purposes, rather than the value of each state, it is easier to consider the value of each action in each state.
+	\begin{definition}[Bellman operator for $Q$]
+		Given a policy $\pi$ and a function $Q: \mathcal{S} \times \mathcal{A} \rightarrow \mathbb{R}$, the Bellman operator $\mathcal{H}$ is defined as:
+		\begin{equation}
+			(\mathcal{H}^{\pi}Q^{\pi})(s,a) = r(s,a) + \gamma \sum_{s' \in \mathcal{S}} P(s'|s,a) \sum_{a' \in \mathcal{A}} \pi(a'|s') Q^{\pi}(s',a')
+			\label{bellqop}
+		\end{equation}
+	\end{definition}
+
+	\begin{definition}[Q-Function]
+		The action–value function $Q^{\pi}(s, a)$ is the expected return starting from state $s$, taking action $a$, and then following policy $\pi$.
+		It is defined as the unique solution of the following Bellman equation:
+		\begin{equation}
+			\mathcal{H}^{\pi}Q^{\pi} = Q^{\pi}
+		\end{equation}
+		which is a fixed point for the Bellman operator $\mathcal{H}$.
+	\end{definition}
+
+	\noindent Again the agent will try to learn a policy that maximizes $Q^{\pi}$  overs the state-action space:
+	\begin{equation}
+		Q^{*}(s,a) = \max_{\pi} Q^{\pi}(s,a) = R(s,a) + \gamma \max_{a^{'} \in \mathcal{A}} \sum_{s^{'} \in \mathcal{S}} \mathcal{P}(s^{'}|s,a)Q^{*}(s^{'},a^{'})
+		\label{bellmanOptQ}
+	\end{equation}
+	where $R(s,a) = \mathbb{E}[\mathcal{R}(s,a)]$\newline
+	Equation~\ref{bellmanOptQ} is also known as Bellman optimality equation for $Q$.\newline
+
+
+	\noindent In this context a \textit{deterministic} optimal greedy policy can be obtained by choosing the action $a$ that maximizes $Q(s,a)$ in each state $s$:
+	\begin{equation}
+		\pi(s) = arg\max_{a \in \mathcal{A}} Q^{*}(s,a)
+	\end{equation}
+	\newline
+	\noindent These equations can be easily generalized to the case where the action and/or the state space are continuous.
+
+	% %------------------------- Da eliminare? -> Si!? -> No!?
+	% \noindent Now we proceed to give similar definitions for the case in which both the action and
+	% state space are continuous (ie. contain an infinite number of states and actions).\newline
+	% Formally we assume state and action spaces to be complete, separable metric spaces $(\mathcal{S},d_{\mathcal{S}})$ and $(\mathcal{A}, d_{\mathcal{A}})$
+	% equipped with their $\sigma-$algebras, $\mathcal{B(\mathcal{S})}$ and $\mathcal{B(\mathcal{A})}$.\newline
+	% We consider infinite horizon problems where the future reward
+	% are discounted by $\gamma$.\newline
+	% The utility of each state following the policy $\pi$ can be expressed with a
+	% modified version of the previous Bellman equation:
+	% \begin{equation}
+	% 	V^{\pi}(s) = \int_{\mathcal{A}} \left ( \mathcal{R}(s,a) + \gamma \int_{\mathcal{S}} V^{\pi}(s^{'}) \mathcal{P}(ds^{'}|s,a) \right ) \pi(da,s)
+	% \end{equation}
+	% Again, for convenience, we prefer to focus on the expected return of taking
+	% an action $a$ in state $s$ and following $\pi$:
+	% \begin{equation}
+	% 	Q^{\pi}(s,a) = \mathcal{R}(s,a) + \int_{\mathcal{S}} \int_{\mathcal{A}} \mathcal{Q}^{\pi}(s^{'},a^{'})\pi(da^{'}|s^{'})\mathcal{P}(ds^{'}|s,a)
+	% \end{equation}
+	% The correspondent optimality equation ($Q^{*}$ and $V^{*}$) can be obtained by maximizing respectively $Q^{\pi}$ and $V^{\pi}$.\newline
+	% In the following we always assume to have continuous states and actions spaces.
+	% %-------------------------
+
+\subsection{Learning in a  Markov Decision Process}
+	\noindent Despite the simple definitions given in the previous section, the problem of learning an optimal policy in a MDP
+	is very complicated and well known in literature. Many techniques have been introduced in the past (for more references see~\cite{sutton1998reinforcement})
+	adopting different approaches and ideas. We propose a categorization on the base of the following properties:
+
+	\begin{itemize}
+		\item \textbf{Model-Free} vs \textbf{Model-Based}: A model-free technique tries to learn a controller (ie. an optimal policy) without
+			previously learning a model of the environment, on the other hand a model-based technique tries first to learn a model of the environment
+			and then tries to learn the optimal policy over the model. See \cite{atkeson1997comparison} for a detailed analysis.
+
+		\item \textbf{On-Policy} vs \textbf{Off-Policy}: In general when a learning agent uses at least two policies: one ($\pi$) is the approximation
+			of the optimal policy a the current iteration and the second ($\hat{\pi}$) is the exploration policy used to get new samples from the environment.
+			In a off-policy algorithm $\pi$ and $\hat{\pi}$ are distinct so the optimal policy is learnt from samples coming from a different policy ($\hat{\pi}$).
+			In a on-policy algorithm $\pi$ and $\hat{\pi}$ coincide, the same policy is used both for exploring the environment and at the same time to approximate the
+			optimal policy. See \cite{precup2001off} as an example of Off-policy algorithm and \cite{singh2000convergence} for an analysis of On-policy algorithms.
+
+		\item \textbf{Online} vs \textbf{Offline}: In an online setting the algorithm processes samples immediately after they have been obtained from the environment
+			(and before the next sample will be sampled), on the other hand in an offline learning algorithm we have two distinct phases: first the algorithm gather a
+			sufficiently large set of samples (ie. a batch) and only in the second phase this batch is used to learn the optimal policy. These two phases can be
+			repeated multiple times during the learning.
+
+		\item \textbf{Tabular} vs \textbf{Function Approximation}: This distinction is related to the internal representation of the models used by the algorithm.
+			Precisely there are algorithm that represents the value of each state of the MDP under the form of a table, this approach has the advantage to be very simple
+			but it is often infeasible when the number of states and actions is too large (for example in infinite MDPs). On the other side the function approximation
+			approach uses a function to associate values to state; in this way the algorithm is able to scale also when the number of states and actions is very large
+			but is much more complicated to implement and mantain with respect to a tabular representation. Refer to \cite{huang2005reinforcement} for an implementation
+			of Q-Learning with Neural Networks.
+
+		\item \textbf{Value Based} vs \textbf{Policy Based}: A value-based algorithm tries to learn the optimal policy by iterating of the space of the value function
+			thanks to the optimality bellman equation (remember that optimal value function is a fixed point of the optimal bellman operator). In an policy
+			based approach the algorithm learns the optimal policy iterating over the space of the policies; this is done by a series of value function evaluation
+			(using the policy of the previous step) and policy improvements (starting from the value function) steps. As an example of policy based methods, consider policy gradient algorithms
+			described in \cite{sutton2000policy}.
+	\end{itemize}
+
+	\noindent Regarding the case where both the state and action space are finite and discrete, the simplest algorithms known in literature are Monte Carlo (MC) and Temporal Difference (TD) methods. Both are example of model-free algorithm.\newline
+	Monte Carlo methods try to learn the optimal policy by sampling \textit{full} random trajectories from the environment, the optimal policy is learned by using samples
+	coming from the trajectories. Temporal Difference, on the other hand, does not need to observe a full trajectory to learn something; leveraging the markov property of the problem
+	TD is able to learn the optimal policy from the single transitions observed along the partial trajectory. Many variations of TD and MC are know (offline/online or on-policy/off-policy)
+	and many recents algorithm are based on the same ideas.\newline
+	More relatively news techniques includes, for example, SARSA and Q-Learning; the first (SARSA) is based on the idea of applying Temporal Difference learning on the update of the
+	$Q$ function of the MDP obtaining a simple updating rule for $Q$. Q-Learning is usually performed off-policy, it learns an optimal $Q$ function using a simple update rule that is
+	able to include, at each step, new information coming from the environment.\newline
+
+	\noindent The problem with the discrete case is related to its applicability to real-world problems. This is why we also consider the problem of learning
+	in a slightly more general case that is when the action space still remains discrete and finite but the state space becomes continuous and infinite.\newline
+	It may appear that the finite number of actions is still a too big limitation but there exists many scenarios where only a finite and discrete
+	set of actions are available to the agent; for example consider the problem of learning how to play a game in which the agent need to traverse a maze
+	without falling inside traps along the path; in this situation there are only four action available to the agent but the state, ie. the position of
+	the agent inside the environment, is continuos.\newline
+	The simplest technique to deal with a continuous state space is to discretize it and then resort to the algorithms described for the discrete case.
+	Unfortunately the discretization of the state space may lead to several disadvantages: a coarse discretization might lead to lose
+	important information present inside the state space and produce a bad learning performance on the other hand a too fine discretization
+	may lead to a huge number of finite states and again produce a bad performance.\newline
+	More sophisticated techniques do not try to transform the MDP into a discrete one but rather try to use some approximators to
+	produce a reliable estimation over the entire state space.\newline
+	These techniques are divided in:
+	\begin{itemize}
+		\item \textbf{Value Approximation}: In the case of value-approximation algorithms, samples are used to update an estimator of the value function (or also the Q function depending on the specific algorithm)
+			that gives an approximation of the current or the optimal policy. Many reinforcement-learning algorithms fall into this category. Important differences between algorithms within this category
+			is whether they are on-policy or off-policy and whether they update online or offline.
+
+		\item \textbf{Policy Approximation}: The idea is to store the current policy and use the experience sample to update
+			such policy to approximate the optimal one. Algorithms that only store information about the policy are called
+			\textit{direct policy-search} while algorithms that store both the value and the policy are known as \textit{actor-critic} methods.
+	\end{itemize}
+
+\subsection{Batch Mode Reinforcement Learning}
+	\noindent One of the main drawbacks of online reinforcement learning is the amount of experience needed to optimally solve a task.
+	In order to overcome this problem batch approaches have been proposed in literature. The main idea behind batch RL is
+	to distinguish between an exploration phase that collects the sample from the environment in the form of tuples
+	$(s,a,s',r)$, called \textit{sampling phase}, and the learning algorithm that learns the optimal policy on the basis of
+	the samples collected in the sampling phase. The only difference with respect to online RL is that the samples are not
+	immediately used in the learning procedure as soon they are observed but they are first collected, producing what is
+	known as a \textit{batch}, and then used in the learning procedure.\newline
+	It is also important to remark that no assumption are made on how the samples are collected from the environment.
+	They can be generated by gathering the four-tuples corresponding to one single trajectory (or episode) as well as
+	by considering several independently generated one or multi-step episodes.
+	This concept is of extreme importance for this thesis, indeed Fitted Q-Iteration (presented in the next sections),falls
+	exactly in the category of batch RL algorithms and our main result WFQI is obtained as a variance of FQI.
+
+	\section{Fitted Q-Iteration}
+
+	\lettrine[lines=2]{I}n this section we introduce a key element of this work: the Fitted Q-Iteration algorithm (abbreviated as FQI from now on).\newline
+	The FQI algorithm is a \textit{batch-mode} reinforcement learning algorithm which tries to build an approximation of the Q function.
+	This is done by iteratively extending the optimization horizon up to a certain number of iterations.\newline
+	The first important property is that it assumes a batch learning model, that is the learning process is divided into two parts:
+	in the first part samples are collected by the agent from the environment, in the second phase the collected samples
+	are used to produce a reliable estimation of the Q function.\newline
+	The second important property is the use of a regression algorithm in the learning phase of the algorithm: FQI formulates
+	the Q function determination problem as a regression problem. This simple idea permits the algorithm to take full advantage
+	in the context of reinforcement learning of any regression algorithm used inside FQI; this is not possible with standard stochastic
+	approximation algorithms which can only use parametric approximators (eg. neural networks).\newline
+	In the following we first introduce some of the works related to FQI and then we proceed to formally present and motivate
+	the final version of the algorithm. Moreover, the main theoretical properties and results are presented and discussed.
+
+
+	\subsection{History and Related Works}
+
+	\noindent The idea of trying to approximate the Q function of a MDP starting from experience collected in batch and exploiting
+	the capability of a supervised learning algorithm has been deeply investigated starting from 2002 with the work by Ormoneit and Sen \cite{ormoneit2002kernel}
+	where the authors propose an algorithm aimed to solve large-scale \textit{dynamic programming} tasks. As already highlighted the main difference,
+	with respect to a reinforcement learning task, is that in dynamic programming the model of the environment is assumed to be known to the agent.
+	Therefore the algorithms first proposed by Ormoneit and Sen and successively by Gordon \cite{gordon1999approximate} are known as \textit{Fitted Value Iteration}.\newline
+	More recently in Ernst \cite{ernst2003near} a series of algorithm closely related to Fitted Q-Iteration are given.
+	These algorithms, that fall under the category of model-based methods, use the idea of building an auxiliary
+	markov decision process using the data collected and then, exploiting the solution of such MDP, they adjust the
+	parameters of the approximation architecture used to estimate the Q-Function of the original task. They also showed
+	that such procedure is completely equivalent to the application of FQI when the states of the MDP correspond to a
+	partition of the original state space and using as regression method simply the average of the output of the training samples
+	that belong to the same partition.\newline
+	In Boyan \cite{boyan2002technical} the author proposes the \textit{Least-square temporal difference} (LSTD) algorithm that results
+	to be very similar to FQI when a linear regression method is used.\newline
+	Finally in 2005 Ernst et al \cite{ernst2005tree} present the current version of fitted q-iteration in combination with tree-based
+	regression techniques. The results presented by the authors are summarized in the rest of the chapter.
+
+	\subsection{The Algorithm}
+
+		\noindent A pseudocode version of the algorithm is presented in Algorithm \ref{fittedq}.\newline
+
+		\begin{algorithm}[H]
+				\caption{Fitted Q-Iteration algorithm}\label{fittedq}
+				\begin{algorithmic}[1]
+					\Procedure{FQI($\mathcal{D} = (s,a,s',r)_{k=1}^{N}, myRegressionAlg$)}{}
+						\State $k \gets 0$
+						\State $\hat{Q}_{k}(s,a) \gets 0$ $\forall (s,a) \in S \times A$
+
+						\State $\mathcal{D}' = {\emptyset}$
+						\While {$checkStoppingCriteria()$}
+							\State $k \gets k + 1$
+
+							\For {$l = 1$ $\text{to}$ $N$}
+								\State $i_l = (s_l, a_l)$
+								\State $o_l = r_l + \gamma \max_{a' \in A} \hat{Q}_{k-1}(s'_l,a'_l)$
+								\State $\mathcal{D}' \gets \mathcal{D}' \cup$ $(i_l,o_l)$
+							\EndFor
+							\State $\hat{Q}_{k} \gets myRegressionAlg(\mathcal{D}')$
+						\EndWhile
+					\EndProcedure
+				\end{algorithmic}
+		\end{algorithm}
+
+	\noindent The algorithm assumes the $N$ experience samples to be already collected according to some policy (eg. random). The Q function
+	of the original task is initialized to 0. From $\mathcal{D}$ the algorithm build an auxiliary dataset $\mathcal{D}'$ that will
+	be used by the regression algorithm ($\text{myRegressionAlg}$) to build a model of the Q-function of the MDP.\newline
+	Notice also that the first iteration of the algorithm, given that $\hat{Q}_i(s,a)$ is initialized to 0 for every state-action
+	pair, is used to produce an approximation of the expected reward that is: $\hat{Q}_{1}(s,a) = \mathbb{E}[r(s,a)]$.
+	In successive iterations only the output part of the input/output pairs $(i_l, o_l)$ that constitutes $\mathcal{D}'$ is updated,
+	this is done using the estimation of the Q-function produced at the previous step and combining it, through the Bellmann equation,
+	with the reward and the next state reached in each specific tuple.\newline
+	It is also important to notice that the different calls to the supervised learning algorithm are totally independent
+	from each other; therefore it is possible to dynamically change the complexity of the regression procedure at each step
+	to reach the best possible bias/variance tradeoff, given the available samples.
+
+	\subsection{Algorithm Motivation}
+
+	\noindent Let first provides an alternative definition for the Bellman operator (for $Q$). This
+	definition is completely equivalent to \ref{bellqop}
+	As usual let $\mathcal{S}$ to be the state space and $\mathcal{A}$ the action space. Let's define
+	$H$ as an operator mapping any function $\mathcal{F}: S \times A \rightarrow \mathbb{R}$ and defined as:
+	\begin{equation}
+		(H\mathcal{F})(s,a) := \mathbb{E}_{w} [r(s,a,w) + \gamma \max_{a' \in \mathcal{A}} K(f(s,a,w),a')]
+		\label{bellmann}
+	\end{equation}
+	where the function $f$ represents the dynamics of the environment and $w$ represents a stochastic disturbance
+	that can affect the next state reach by the agent. $H$ is also known as Bellman operator.\newline
+	The main result is the following:
+
+	\begin{theorem} [Ernst \cite{ernst2005tree}]
+		The sequence of $Q_N$-functions defined on $S \times A$ by
+
+		\begin{equation}
+			\begin{split}
+				Q_o(s,a) = 0 \\
+				Q_{N}(s,a) = (HQ_{N-1})(s,a)
+			\end{split}
+		\end{equation}
+
+		converges (in infinity norm) to the Q-function defined as the unique solution of the Bellmann equation
+		\begin{equation}
+			Q(s,a) = (HQ)(s,a)
+		\end{equation}
+	\end{theorem}
+
+	\noindent Let's first consider the deterministic case
+	\begin{equation}
+		\begin{split}
+			s' = f(s,a) \\
+			r = r(s,a)
+		\end{split}
+	\end{equation}
+	that is both the transition and reward model are not affected by noise, then equation \ref{bellmann} can be rewritten as
+	\begin{equation}
+		Q_{N}(s,a) = r(s,a) + \gamma \max_{a' \in A} Q_{N-1} (f(s,a),a')
+		\label{bellmann2}
+	\end{equation}
+
+	\noindent Suppose now that a dataset of experience samples is available $\mathcal{D} = {(s_i,a_i,s'_i,r_i)}_{i=1}^{\#\mathcal{D}}$.
+	The simplest idea is that we can use $Q_{N-1}$ and $\mathcal{D}$ to obtain $Q_N$. Given a tuple $(s_i,a_i,s'_i,r_i)$ we have:
+	\begin{equation}
+		Q_{N}(s_i,a_i) = r(s_i,a_i) + \gamma \max_{a' \in A} Q_{N-1}(s'_i,a')
+		\label{bellmann3}
+	\end{equation}
+
+	\noindent The problem is that we are dealing with a continuous state space and the samples inside $\mathcal{D}$ do not
+	permit the calculation to generalize over the entire $S \times A$.\newline
+	To achieve a generalization over the entire state-action space we use the samples inside $\mathcal{D}$ in conjunction
+	with equation \ref{bellmann3} to build an auxiliary dataset:
+	\begin{equation}
+		\mathcal{D}' = \left \{((s_{k}, a_k), Q_N(s_{k},a_{k})), k = 1 \cdots \# \mathcal{D} \right \}
+	\end{equation}
+
+	\noindent Then we can apply a totally generic regression algorithm to $\mathcal{D}'$ and obtain a model
+	that is able to generalize well of the entire state-action space. This model can now be used to obtain a
+	sound estimation $Q_N$. The process can be repeated up to a certain number of iteration to obtain
+	increasingly good estimation of the Q-function.\newline
+
+	\noindent The stochastic case can be treated in similar way: the problem is that for some samples $(s_i,a_i,s'_i,r_i)$
+	the right hand side of equation \ref{bellmann2} is no more equal to $Q_N(s_i,a_i)$ due to the presence of noise
+	in both the transition and reward model. We can think of $r(s_i,a_i) + \gamma \max_{a' \in A} Q_{N-1} (f(s_i,a_i),a')$ as
+	a realization of a random variable whose expected value is $Q_N(s_i,a_i)$. This is not a problem given that
+	a generic regression algorithm always search for an approximation of the expectation of the output variables
+	conditioned by the input and will return again an estimation of $Q_N$ over $S \times A$.\newline
+
+	\noindent Once the approximation of the Q-function is available a stationary deterministic control
+	policy for the agent can be simply obtained by:
+	\begin{equation}
+		\pi^{*}(s) = arg \max_{a \in A} Q_{N}(s,a)
+	\end{equation}
+
+	\noindent Some attention must be paid in the $\max$ operator used in the previous equations: when the
+	action space is finite we can simply enumerate for every action the value of $Q_{N}$ and
+	simply take the maximum. On the other hand when we generalize to the case where the
+	action space is continuous the greedy action selection used for the policy improvement step
+	may become particularly problematic and expensive to be computed at every iteration.
+	Authors in \cite{neumann2009fitted} propose an alternative to the $\max$ operator (a soft-greedy action selection)
+	that, in practice, appears to yield an efficient version of the FQI algorithm also in the case of
+	continuous action space.
+
+	\subsection{Stopping Criteria and Convergence}
+
+	\noindent A stopping condition is needed to understand at which iteration the algorithm must be stopped.
+	Suppose that after $T$ iterations our FQI algorithm yields a Q-function $Q_T$ and let the relevant stationary
+	policy be $\pi^*_T$. Our metric is given by the discounted expected reward $J_{\infty}^{\pi}$ with:
+	\begin{equation}
+		J_{\infty}^{\pi}(x) = \lim_{T \rightarrow \infty} \mathbb{E}_{w_t} \left [ \sum_{t=0}^{T-1} \gamma^{t} r(s_t, \pi(s_t), w_t) | x_0 = x  \right ]
+	\end{equation}
+	\noindent where $x_0$ is the starting state.\newline
+	Let $\pi^*$ be the optimal stationary policy for the MDP. A stopping criteria just need to find an upper bound
+	to the difference $||J_{\infty}^{\pi_{N}^{*}} - J_{\infty}^{\pi^{*}}||$ (in infinity norm). Authors in \cite{ernst2005tree} give the following
+	inequality:
+	\begin{equation}
+		||J_{\infty}^{\pi_{N}^{*}} - J_{\infty}^{\pi^{*}}||_{\infty} \leq 2 \frac{\gamma^{N}B_r}{(1-\gamma)^2}
+		\label{stopping}
+	\end{equation}
+	\noindent where $B_r$ is a bound over the rewards of the MDP. Fixed a desired accuracy (and $B_r$) equation \ref{stopping}
+	permits to derive an approximate number of iterations needed to reach it.\newline
+	Another possibility requires to look at the distance between the Q-functions of two consecutive iterations (also known as
+	increment). Unfortunately this criteria has no guarantees to work in practice given that, depending on the specific
+	regression algorithm, we have no assurance that the sequence of Q-function will converge to the optimal one.\newline
+
+	\noindent Regarding the convergence we first provide a formal definition:
+	\begin{definition}[Ernst \cite{ernst2005tree}]
+		The FQI algorithm is said to converge if there exists a function $Q: S \times A \rightarrow \mathbb{R}$ such that
+		$\forall \epsilon > 0$ there exists an $n \in \mathbb{N}$ such that:
+		\begin{equation*}
+			||Q_N - Q||_{\infty} < \epsilon \quad \forall N > n
+		\end{equation*}
+	\end{definition}
+	\noindent It can be proved that the above conditions are satisfied depending on the specific supervised learning algorithm
+	used within FQI.\newline
+	In particular given a generic dataset $\mathcal{D} = \{(i_t, o_t)\}_{t=1}^{\#\mathcal{D}}$ we require the regression procedure
+	to satisfy the following conditions:
+	\begin{equation}
+		\begin{split}
+			f(i) = \sum_{t=1}^{\#\mathcal{D}} k_{\mathcal{D}} (i_t,i)*o_t \\
+			\sum_{t=1}^{\#\mathcal{D}} |k_{\mathcal{D}}(i_t,i)| = 1 \quad \forall i
+			\label{convcond}
+		\end{split}
+	\end{equation}
+	\noindent where $k_{\mathcal{D}}$ represents the kernel used in the regression algorithm and that must not change
+	from one call to the other within FQI.\newline
+	Algorithms that satisfies conditions \ref{convcond} are for example k-nearest neighbors, partition methods, locally weighted averaging and
+	more generally kernel-based methods.
+
+	\subsection{Tree-based Regression}
+		\noindent As stated in the previous paragraphs we make no assumption about the particular regression algorithm that could be
+		used inside FQI. In this work, our choice falls on the large family of methods known in literature as Tree-based regression.\newline
+		Indeed, in practice (eg. \cite{lazaric2008transfer}), the union between FQI and tree-based methods has often led to very
+		robust and effective algorithms.
+
+		\subsubsection{Characterization}
+			\noindent Let $\mathcal{D}$ be the training dataset for the regression. The idea behind tree-based method is to partition the input
+			space in regions then the algorithm will produce a constant prediction in each region, based on the average of the outputs of the
+			variables in $\mathcal{D}$ that belong to that particular region.\newline
+			Let $P(i)$ be a function that assigns to each input $i$ the region to which $i$ belongs to and let $I_R$ be the characteristic function of
+			region $R$.
+			\begin{equation}
+				I_R(i) =
+				\begin{cases}
+					1 \quad i \in R \\
+					0 \quad \text{Otherwise}
+				\end{cases}
+			\end{equation}
+			Then the model produced by a single regression tree is given by the following equation:
+			\begin{equation}
+				f(i) = \sum_{t=1}^{\#\mathcal{D}} k_{\mathcal{D}} (i_t,i)*o_t
+				\label{tree-model}
+			\end{equation}
+			where the kernel $k_{\mathcal{D}}$ is defined by:
+			\begin{equation}
+				k_{\mathcal{D}}(i_t, i) = \frac{I_{P(i)}(i_t)}{\sum_{(a,b) \in \mathcal{D}} I_{S(i)}(a)}
+				\label{kernel-1}
+			\end{equation}
+
+			\noindent It is common practice not to use a single tree (in particular for the case of Extra Trees) but to build an ensemble of them.
+			The prediction of the ensemble for a given input is now the average of the predictions of the single trees.\newline
+			Suppose to consider an ensemble of $n$ regression trees with a training dataset $\mathcal{D}$. The dataset is partitioned in $n$ parts,
+			one for each tree. Let $\mathcal{D}_m$ be the training dataset for the $m$-th tree and also let $P_{m}(i)$ be the function that
+			assigns to each $i$ the region of the $m$-th partition it belongs to. Again the produced model is given by equation \ref{tree-model} but
+			now the kernel $k_{\mathcal{D}}$ is given by:
+			\begin{equation}
+				k_{\mathcal{D}}(i_t, i) = \frac{1}{n} \sum_{m=1}^{n} \frac{I_{P_{m}(i)}(i_t)}{\sum_{(a,b) \in \mathcal{D}_m} I_{S_{m}(i)}(a)}
+				\label{kernel-2}
+			\end{equation}
+			\noindent It is important to notice that both \ref{kernel-1} and \ref{kernel-2} satisfies convergence conditions \ref{convcond}.\newline
+
+			\noindent Many different tree-based regression algorithms have been proposed in literature (see \cite{ernst2005tree} for a quite comprehensive compendium).
+			They differ by the number of regression trees they build (one or an ensemble), the way they grow the tree from a generic training set, and, for
+			the methods that build an ensemble of trees, the way in which they partition the initial training dataset.\newline
+			In the remaining part of this chapter, we focus on a very particular method, Extra Trees, that will be extensively used in the
+			experimental section.
+
+		\subsubsection{Extra Trees}
+			\noindent \textbf{Ext}remely \textbf{Ra}ndomized Trees is an ensemble method that builds a forest of trees. The main difference with other methods is that
+			each tree is grown separately from the complete initial training dataset.\newline
+			The algorithm was first proposed in \cite{ernst2005tree}.\newline
+			To determine a test at a node, this algorithm selects K cut-directions at random and for each cut-direction, a cut-point
+			at random. It then computes a score for each of the K tests and chooses among these K tests the one that maximizes the score.
+			Again, the algorithm stops splitting a node when the number of elements in this node is less than a parameter $n_{\min}$.
+			Three parameters are associated to this algorithm: the number M of trees to build, the number K of candidate tests at each node and the minimal leaf size $n_{\min}$.
+			For the complete tree-building procedure refer to Appendix A of \cite{ernst2005tree}.

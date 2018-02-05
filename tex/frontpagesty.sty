@@ -1,0 +1,67 @@
+% Author Andrea Sessa
+% Define the style of the frontpage
+% Define commands to define the title,supervisor, etc..
+
+\ProvidesPackage{frontpagesty}[2009/05/05 v1.0 PhD Thesis Title]
+\RequirePackage{graphicx}
+
+\newcommand{\department}[1]{\def\@department{#1}}
+\newcommand{\course}[1]{\def\@course{#1}}
+\newcommand{\supervisor}[1]{\def\@supervisor{#1}}
+\newcommand{\cosupervisor}[1]{\def\@cosupervisor{#1}}
+\newcommand{\titleimage}[1]{\def\@titleimage{#1}}
+\newcommand{\ayear}[1]{\def\@ayear{#1}}
+\newcommand{\matricola}[1]{\def\@matricola{#1}}
+\newcommand{\student}[1]{\def\@student{#1}}
+
+\renewcommand{\maketitle}{
+\thispagestyle{empty}
+\begin{center}
+\bfseries
+\vspace*{-0.5cm}
+  \begin{figure}[htbp]
+    \begin{center}
+       \includegraphics[width=26mm]{\@titleimage}
+    \end{center}
+  \end{figure}
+%\vspace*{-0.2cm}
+  \large{\sc Politecnico di Milano\\%}\\
+  %\normalsize
+  \@department\\
+  %\large{\sc
+  \@course}\\
+  \normalsize
+\vspace*{0.5cm}
+\hrule
+\vspace*{4cm}
+ \LARGE\sc
+  \textbf{\@title}\\
+\end{center}
+\vspace*{3cm}
+\large
+\begin{flushright}
+  \normalsize Master Thesis of:\\
+  \large \textbf{\@student}\\
+\end{flushright}
+\begin{flushright}
+  \normalsize Mat.
+  \small \textbf{\@matricola}\\
+\end{flushright}
+\vspace*{1cm}
+\begin{flushleft}
+  \normalsize Supervisor:\\
+ \large \textbf{Prof. \@supervisor}\\
+\end{flushleft}
+\begin{flushleft}
+  \normalsize Co-supervisor:\\
+  \large \textbf{Dott. \@cosupervisor}\\
+ \end{flushleft}
+ \vfill
+\begin{center}
+\hrule
+\vspace{1cm}
+\textbf{\@ayear}
+\end{center}
+\cleardoublepage
+\setcounter{page}{1}
+}

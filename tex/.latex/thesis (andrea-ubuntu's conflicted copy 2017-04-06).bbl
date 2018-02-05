@@ -1,0 +1,146 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 2.7 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \sortlist[entry]{nty/global/}
+    \entry{epshteyn2008active}{inproceedings}{}
+      \name{author}{3}{}{%
+        {{hash=15611ecc963fc1b11e8d426857b03b53}{%
+           family={Epshteyn},
+           family_i={E\bibinitperiod},
+           given={Arkady},
+           given_i={A\bibinitperiod}}}%
+        {{hash=c8d3f271f0bad94af048b7d6cb9ae7bb}{%
+           family={Vogel},
+           family_i={V\bibinitperiod},
+           given={Adam},
+           given_i={A\bibinitperiod}}}%
+        {{hash=b7b93b3ba86987a9298b809332fcb898}{%
+           family={DeJong},
+           family_i={D\bibinitperiod},
+           given={Gerald},
+           given_i={G\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {ACM}%
+      }
+      \strng{namehash}{dcdd1d3c8bb51d222310ddca55675f81}
+      \strng{fullhash}{dcdd1d3c8bb51d222310ddca55675f81}
+      \field{sortinit}{E}
+      \field{sortinithash}{fefc5210ef4721525b2a478df41efcd4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 25th international conference on Machine learning}
+      \field{title}{Active reinforcement learning}
+      \field{year}{2008}
+      \field{pages}{296\bibrangedash 303}
+      \range{pages}{8}
+    \endentry
+    \entry{lazaric2012transfer}{incollection}{}
+      \name{author}{1}{}{%
+        {{hash=c0edda5e676d227fa203a6350888089e}{%
+           family={Lazaric},
+           family_i={L\bibinitperiod},
+           given={Alessandro},
+           given_i={A\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{c0edda5e676d227fa203a6350888089e}
+      \strng{fullhash}{c0edda5e676d227fa203a6350888089e}
+      \field{sortinit}{L}
+      \field{sortinithash}{872351f18d0f736066eda0bf18bfa4f7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Reinforcement Learning}
+      \field{title}{Transfer in reinforcement learning: a framework and a survey}
+      \field{year}{2012}
+      \field{pages}{143\bibrangedash 173}
+      \range{pages}{31}
+    \endentry
+    \entry{lazaric2008transfer}{inproceedings}{}
+      \name{author}{3}{}{%
+        {{hash=c0edda5e676d227fa203a6350888089e}{%
+           family={Lazaric},
+           family_i={L\bibinitperiod},
+           given={Alessandro},
+           given_i={A\bibinitperiod}}}%
+        {{hash=af292b1dcd0b0c3efd61b01492fb5c74}{%
+           family={Restelli},
+           family_i={R\bibinitperiod},
+           given={Marcello},
+           given_i={M\bibinitperiod}}}%
+        {{hash=8ff32b0569213a7751b7ae6745547688}{%
+           family={Bonarini},
+           family_i={B\bibinitperiod},
+           given={Andrea},
+           given_i={A\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {ACM}%
+      }
+      \strng{namehash}{9614f6cb56da763fb1d1a4f167615bef}
+      \strng{fullhash}{9614f6cb56da763fb1d1a4f167615bef}
+      \field{sortinit}{L}
+      \field{sortinithash}{872351f18d0f736066eda0bf18bfa4f7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 25th international conference on Machine learning}
+      \field{title}{Transfer of samples in batch reinforcement learning}
+      \field{year}{2008}
+      \field{pages}{544\bibrangedash 551}
+      \range{pages}{8}
+    \endentry
+    \entry{singh2004intrinsically}{inproceedings}{}
+      \name{author}{3}{}{%
+        {{hash=2b3202d40dae8a29a4013fe363d7de97}{%
+           family={Singh},
+           family_i={S\bibinitperiod},
+           given={Satinder\bibnamedelima P},
+           given_i={S\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+        {{hash=4f104417cfd96b2a360b62d8cf110a96}{%
+           family={Barto},
+           family_i={B\bibinitperiod},
+           given={Andrew\bibnamedelima G},
+           given_i={A\bibinitperiod\bibinitdelim G\bibinitperiod}}}%
+        {{hash=d47ede25f528b578ea7d00270e9c2106}{%
+           family={Chentanez},
+           family_i={C\bibinitperiod},
+           given={Nuttapong},
+           given_i={N\bibinitperiod}}}%
+      }
+      \strng{namehash}{df66a1ec2a3358aa02380b04a35cc94d}
+      \strng{fullhash}{df66a1ec2a3358aa02380b04a35cc94d}
+      \field{sortinit}{S}
+      \field{sortinithash}{fd1e7c5ab79596b13dbbb67f8d70fb5a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{NIPS}
+      \field{number}{2}
+      \field{title}{Intrinsically Motivated Reinforcement Learning.}
+      \field{volume}{17}
+      \field{year}{2004}
+      \field{pages}{1281\bibrangedash 1288}
+      \range{pages}{8}
+    \endentry
+  \endsortlist
+\endrefsection
+\endinput
+

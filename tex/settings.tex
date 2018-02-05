@@ -1,0 +1,183 @@
+% Author Andrea Sessa
+\newenvironment{sistema}%
+	{\left\lbrace\begin{array}{@{}l@{}}}%
+	{\end{array}\right.}
+
+\renewcommand{\epsilon}{\varepsilon}
+\renewcommand{\theta}{\vartheta}
+\renewcommand{\phi}{\varphi}
+\renewcommand{\vec}{\mathbf}
+\newcommand{\bibtitolocitati}{Riferimenti citati nel testo}
+\newcommand{\bibtitolocitaticarta}{Pubblicazioni e Manuali}
+\newcommand{\bibtitolocitatiweb}{Materiale Online}
+\newcommand{\bibtitolononcitati}{Ulteriore materiale consultato}
+\newcommand{\bibtitolononcitaticarta}{Pubblicazioni e Manuali}
+\newcommand{\bibtitolononcitatiweb}{Materiale Online}
+\newcommand{\bibtitololatex}{{\LaTeX{}}}
+\DeclareBibliographyCategory{citati}
+\defbibheading{citati-cartacei}{\subsection*{\bibtitolocitaticarta}}
+\defbibheading{citati-web}{\subsection*{\bibtitolocitatiweb}}
+\defbibheading{non-citati}{\section*{\bibtitolononcitati}}
+\defbibheading{non-citati-cartacei}{\subsection*{\bibtitolononcitaticarta}}
+\defbibheading{non-citati-web}{\subsection*{\bibtitolononcitatiweb}}
+\defbibheading{latex}{\subsection*{\bibtitololatex}}
+\AtEveryCitekey{\addtocategory{citati}{\thefield{entrykey}}}
+\AtEveryBibitem{
+    \clearfield{doi}
+    \clearfield{eprint}
+}
+\nocite{*}
+%
+% ------------------------------------------------------------------------ %
+%
+% Decommentare i comandi che seguono
+% se si vuole ripristinare bibliografia standard
+% (commentando tutto il blocco precedente)
+%
+%\defbibheading{bibliography}{%
+%	\cleardoublepage%
+%	\phantomsection%
+%	\addcontentsline{toc}{chapter}{\bibname}%
+%	\chapter*{\bibname\markboth{\bibname}{\bibname}}%
+%	}
+
+\definecolor{webgreen}{rgb}{0,.5,0}
+\definecolor{webbrown}{rgb}{.6,0,0}
+\definecolor{darkbluePoliMi}{rgb}{0,0.18,0.40}	%rgb(0, 46, 103)
+\definecolor{midbluePoliMi}{rgb}{0.33,0.47,0.62}	%rgb(84, 121, 157)
+\definecolor{lightbluePoliMi}{rgb}{0.53,0.64,0.73}	%rgb(134, 163, 186)
+\definecolor{orangePoliMi}{rgb}{1,0.59,0}		%rgb(255, 151, 0)
+\definecolor{redSapienza}{rgb}{0.514,0.031,0.165}	%rgb(131, 8, 42)
+
+\lstset{
+	basicstyle=\smaller[0]\ttfamily,		% Black & White:
+	keywordstyle=\color{RoyalBlue},	% keywordstyle=\color{black}\bfseries,
+	commentstyle=\color{webgreen},	% commentstyle=\color{gray},
+	stringstyle=\color{webbrown},		% stringstyle=\color{black},
+	numbers=left,
+	numberstyle=\smaller[2],
+	stepnumber=1,
+	numbersep=8pt,
+	showspaces=false,
+	showstringspaces=false,
+	showtabs=false,
+	breaklines=true,
+	frameround=ffff,
+	frame=single,
+	tabsize=2,
+	captionpos=t,
+	breakatwhitespace=false,
+	}
+%
+% Solution to the encoding issue
+\lstset{literate=
+  {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+  {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+  {à}{{\`a}}1 {è}{{\`e}}1 {ì}{{\`i}}1 {ò}{{\`o}}1 {ù}{{\`u}}1
+  {À}{{\`A}}1 {È}{{\'E}}1 {Ì}{{\`I}}1 {Ò}{{\`O}}1 {Ù}{{\`U}}1
+  {ä}{{\"a}}1 {ë}{{\"e}}1 {ï}{{\"i}}1 {ö}{{\"o}}1 {ü}{{\"u}}1
+  {Ä}{{\"A}}1 {Ë}{{\"E}}1 {Ï}{{\"I}}1 {Ö}{{\"O}}1 {Ü}{{\"U}}1
+  {â}{{\^a}}1 {ê}{{\^e}}1 {î}{{\^i}}1 {ô}{{\^o}}1 {û}{{\^u}}1
+  {Â}{{\^A}}1 {Ê}{{\^E}}1 {Î}{{\^I}}1 {Ô}{{\^O}}1 {Û}{{\^U}}1
+  {œ}{{\oe}}1 {Œ}{{\OE}}1 {æ}{{\ae}}1 {Æ}{{\AE}}1 {ß}{{\ss}}1
+  {ç}{{\c c}}1 {Ç}{{\c C}}1 {ø}{{\o}}1 {å}{{\r a}}1 {Å}{{\r A}}1
+  {€}{{\EUR}}1 {£}{{\pounds}}1
+}
+
+\lstnewenvironment{Matlab}{\lstset{language=Matlab}}{}
+\lstnewenvironment{C++}{\lstset{language=C++}}{}
+\lstnewenvironment{bash}{\lstset{language=bash}}{}
+\addto\captionsitalian{\renewcommand{\lstlistingname}{Codice}}
+\addto\captionsitalian{\renewcommand{\lstlistlistingname}{Elenco dei codici}}
+\hypersetup{
+	%hyperfootnotes=false,
+	%plainpages=false,
+	%pdfpagelabels,
+	colorlinks=true,
+	linktocpage=true,	% true=link nei numeri pagina / false=link nel titolo
+	pdfstartpage=1,
+	pdfstartview=FitV,
+	breaklinks=true,
+	pageanchor=true,
+	pdfpagemode=UseOutlines,
+	%bookmarksnumbered,
+	%bookmarksopen=true,
+	bookmarksopenlevel=1,
+	hypertexnames=true,
+	pdfhighlight=/O,
+	urlcolor=webbrown,		% colore dei link a pagine web
+	linkcolor=RoyalBlue,		% colore dei collegamenti nel testo
+	citecolor=webgreen,		% colore delle citazioni
+	pdftitle={},		% da qui in poi compilazione metadati
+	pdfauthor={},
+	pdfsubject={},
+	pdfcreator={pdfLaTeX},
+	pdfproducer={LaTeX with hyperref},
+	pdfkeywords={polimi,
+		tesi,
+		latex,
+		laurea,
+		dottorato,
+		scribd},
+}
+
+\newcommand{\mail}[1]{\href{mailto:#1}{\texttt{#1}}}
+
+\graphicspath{
+	{images/}
+	}
+\captionsetup{tableposition=top,
+	figureposition=bottom,
+	font=small,
+	format=hang,
+	labelfont=bf}
+
+\pagestyle{fancy}
+
+\makeatletter 			% necessary for using \@chapapp
+\renewcommand{\chaptermark}[1]{
+  \markboth{\@chapapp\ \thechapter.\ #1}{}}
+\makeatother
+
+\renewcommand{\sectionmark}[1]{
+	\markright{\thesection.\ #1}}
+
+\fancyhf{}
+\fancyhead[LE,RO]{\bfseries\thepage}
+\fancyhead[LO]{\bfseries\rightmark}
+\fancyhead[RE]{\bfseries\leftmark}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancypagestyle{plain}{
+		\fancyhead{}
+		\fancyfoot[C]{\bfseries\thepage}
+		\renewcommand{\headrulewidth}{0pt}
+		}
+\makeatletter
+\def\bflabel#1{{\textbf{\textsf{#1}}\hfill}}
+\renewenvironment{AC@deflist}[1]%
+{\ifAC@nolist%
+\else%
+\begin{list}{}%
+{\settowidth{\labelwidth}{\textbf{\textsf{#1}}}%
+\setlength{\leftmargin}{\labelwidth}%
+\addtolength{\leftmargin}{\labelsep}%
+\renewcommand{\makelabel}{\bflabel}}%
+\fi}%
+{\ifAC@nolist%
+\else%
+\end{list}%
+\fi}%
+\makeatother
+
+\hyphenation{OpenFOAM}
+\hyphenation{Matlab}
+\hyphenation{bash}
+
+\arrayrulecolor{darkbluePoliMi}
+
+\renewcommand{\footnoterule}{%
+  \kern -3pt
+  {\color{darkbluePoliMi} \hrule width 0.4\textwidth}
+  \kern 2.6pt
+}

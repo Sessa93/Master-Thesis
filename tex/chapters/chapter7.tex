@@ -1,0 +1,238 @@
+\chapter{Theoretical Analysis}
+  \lettrine[lines=2]{I}n this chapter we try to provide some theoretical basis regarding our approach to
+  the problem of transfer. In particular we first try to understand if it is possible to provide some
+  theoretical bounds to the error introduced by both the use of source samples and the estimation of the
+  weights of rewards and dynamics. We are able to show that, under very simple hypothesis, over the tasks
+  it possible to bound the bias introduced by the use of source samples in conjunction with estimated weights.
+
+  \section{Errors Bounding}
+    \subsection{Assumptions}
+      \noindent Suppose $P^{S}(s,a,s',r) = P^{S}(r|s,a)P^{S}(s'|s,a)P^{S}(s,a)$ is the joint density of the samples
+      under the source model, and $P^{T}$ the corresponding density under the target model. Let indicate with $x$ either
+      the reward $r$ or $s'$ for a given sample $(s,a,s',r)$.
+      Suppose, without loss of generality, that only one source MDP exists, indeed, in the case multiple
+      source tasks are available no substantial modifications are needed given that no relationship are
+      assumed to exists between tasks.
+      Any regressor we could adopt in our Weighted Fitted Q-Iteration algorithm tries to minimize the expectation
+      of some loss function $L$ under the target distribution:
+
+      \begin{equation}
+        arg\min_{\theta} \mathbb{E}_{P^{T}} \left [ L(\hat{Q}_{\theta}^{1} (s,a) + \max_{a'} \hat{Q}_{t-1}(s',a')) \right ]
+      \end{equation}
+      \noindent This can be computed under the source distribution by employing importance sampling:
+      \begin{equation}
+        arg\min_{\theta} \mathbb{E}_{P^{S}} \left [ w_{p}(s,a,s') L(\hat{Q}_{\theta}^{1} (s,a) + \max_{a'} \hat{Q}_{t-1}(s',a')) \right ]
+      \end{equation}
+      where:
+      \begin{equation}
+        w_{p}(s,a,s') = \frac{P^{T}(s'|s,a) P^{T}(s,a)}{P^{S}(s'|s,a)P^{S}(s,a)}
+      \end{equation}
+      According to our approach, we neglect the terms $P(s,a)$ and, thus, consider the importance weights defined by:
+      \begin{equation}
+        w_{p}(s,a,s') = \frac{P^{T}(s'|s,a)}{P^{S}(s'|s,a)}
+      \end{equation}
+      Notice that this approximation does not introduce any error in the estimation of the Q-function since,
+      for every pair $(s,a)$, the target $\hat{Q}^{1} + \max_{a'}\hat{Q}_{t-1}(s',a')$ is always correctly
+      weighted.\newline
+      \noindent We consider Gaussian models for both the reward and the transitions dynamics, thus:
+      \begin{equation}
+        P^{T}(r|s,a) = \mathcal{N}(\mu_{r,T}, \sigma_{r}^{2}), \quad P^{S}(r|s,a) = \mathcal{N}(\mu_{r,S}, \sigma^{2}_{r})
+      \end{equation}
+      and:
+      \begin{equation}
+        P^{T}(s'|s,a) = \mathcal{N}(\mu_{p,T}, \sigma_{p}^{2}), \quad P^{S}(s'|s,a) = \mathcal{N}(\mu_{p,S}, \sigma^{2}_{p})
+      \end{equation}
+      We suppose, without loss of generality, the variances are known and do not change between source and target. Let us
+      denote the densities we estimate from the available samples as:
+      \begin{equation}
+        \tilde{P}^{T}(r|s,a) = \mathcal{N}(\tilde{\mu}_{r,T}, \sigma^{2}_{r}), \quad \tilde{P}^{S}(r|s,a) = \mathcal{N}(\tilde{\mu}_{r,S}, \sigma^{2}_{r})
+      \end{equation}
+      and:
+      \begin{equation}
+        \tilde{P}^{T}(s'|s,a) = \mathcal{N}(\tilde{\mu}_{p,T}, \sigma^{2}_{p}), \quad \tilde{P}^{S}(s'|s,a) = \mathcal{N}(\tilde{\mu}_{p,S}, \sigma^{2}_{p})
+      \end{equation}
+      Suppose to have $N$ target samples and $M$ source samples (typically $N << M$). Then, the empirical expected loss considered by
+      our regressor is:
+      \begin{equation}
+        \hat{L} = \frac{1}{N+M}\sum_{i=1}^{N} L(r_i,s'_i) + \frac{1}{N+M} \sum_{j=1}^{M} \tilde{w}_{p}(s'_j)L(r_j, s'_j)
+      \end{equation}
+      With $\tilde{w}$ we indicated the estimated weights. Notice that we keep the dependency on $(s,a)$ implicit for ease of
+      notation.
+
+      \subsection{Analysis}
+      \noindent In this section we assume that the state space and the reward function are bounded, anyway the analysis is
+      possible also in the unbounded case but less powerful results.
+
+      \begin{equation*}
+        \forall s \in \mathcal{S} : s \in [-S,S], \quad \forall (s,a) \in \mathcal{S} \times \mathcal{A} : \mathcal{R}(s,a) \in [-R,R]
+      \end{equation*}
+
+      \noindent Under these hypothesis we can prove the following result:
+
+      \begin{lemma} The true importance weights are bounded:
+        \begin{equation}
+          w(x) \leq W < \infty
+        \end{equation}
+      \end{lemma}
+      \begin{proof}
+        The importance weights can be written as:
+        \begin{equation}
+            w(x) = \frac{P^{T}(x)}{P^{S}(x)}
+        \end{equation}
+        Let us bound $w(x)$ using the Gaussian hypothesis:
+        \begin{equation}
+          \begin{aligned}
+              & w(x) = exp \left ( \frac{2x(\mu_{x,T} - \mu_{x,S}) - (\mu^{2}_{x,T} - \mu^{2}_{x,S})}{2\sigma^{2}_{x}} \right ) \\
+              & = \frac{exp \left ( \frac{2x(\mu_{x,T} - \mu_{x,S})}{2\sigma^{2}_{x}} \right )}{exp \left ( \frac{(\mu^{2}_{x,T} - \mu^{2}_{x,S})}{2\sigma^{2}_{x}} \right )} \\
+              & \leq \frac{1}{exp \left ( \frac{(\mu^{2}_{x,T} - \mu^{2}_{x,S})}{2\sigma^{2}_{x}} \right )} \max \left \{ exp \left ( \frac{2X(\mu_{x,T} - \mu_{x,S})}{2\sigma_{x}^{2}} \right ), exp \left ( - \frac{2X(\mu_{x,T} - \mu_{x,S})}{2\sigma_{x}^{2}} \right ) \right \} \\
+              & = \frac{exp \left ( \frac{X|\mu_{x,T} - \mu_{x,S}|}{\sigma^{2}_{x}} \right )}{exp \left ( \frac{(\mu^{2}_{x,T} - \mu^{2}_{x,S})}{2\sigma^{2}_{x}} \right )} \\
+              & = W \\
+              & < \infty
+          \end{aligned}
+        \end{equation}
+        Where $x$ can indicate either the reward $r$ or the next state $s'$ of a given sample.
+      \end{proof}
+
+      \noindent Notice that, in practice, any estimated weight larger than $W$ can be safely omitted or clipped
+      to zero since it would correspond to a wrong density estimation, thus justifying our assumption.\newline
+
+      \noindent In the following we proceed to give a bound over $|\hat{L} - \mu_{L}|$. We initially
+      assume that the reward models of target and source are identical and no generalization error is introduced
+      by the regressor over $\hat{Q}^{1}$. In the second part we also add the error introduced by the regression,
+      and use of estimated weights, over the reward.\newline
+      Again we consider the empirical loss function:
+      \begin{equation}
+        \hat{L} = \hat{L}_{T} + \hat{L}_{S} = \frac{1}{N+M} \sum_{i=1}^{N} L(r_i, s'_i) + \frac{1}{N+M} \sum_{j=1}^{M} \tilde{w}_{p}(s'_j)L(r_j,s'_j)
+      \end{equation}
+      where $L \in [0,1]$. The first term refers to the unbiased samples coming the target task, that, by definition
+      have unitary weights. The second term refers to the biased samples coming from the source task and must be
+      corrected using the corresponding importance weights.\newline
+
+      \noindent Our goal is to find a bound on $|\hat{L} - \mu_{L}|$. This can be easily obtained by simple
+      algebraic manipulations of the previous equation:
+      \begin{equation}
+        \begin{aligned}
+          & \left | \hat{L} - \mu_{L} \right | = \left | \hat{L}_{T} - \frac{N}{M+M} \mu_{L} + \hat{L}_{S} - \frac{M}{N+M} \mu_{L} \right | \\
+          & \leq \left | \hat{L}_{T} - \frac{N}{N+M} \mu_{L} \right | + \left | \hat{L}_{S} - \frac{M}{N+M} \mu_{L} \right | \\
+          & \leq \left | \mathbb{E}_{P^T}[\hat{L}_{T}] - \frac{N}{N+M} \mu_{L} \right | + \left | \hat{L}_{T} - \mathbb{E}_{P^T}[\hat{L}_{T}] \right | \\
+          & + \left | \mathbb{E}_{P^S} [\hat{L}_{S}] - \frac{M}{N+M} \mu_{L} \right | + \left | \hat{L}_{S} - \mathbb{E}_{P^S} [\hat{L}_{S}] \right | \\
+          & = \left | \hat{L}_{T} - \mathbb{E}{P^T}[\hat{L}_{T}] \right | + \left | \mathbb{E}_{P^S}[\hat{L}_{S}] - \frac{M}{M+N}\mu_{L} \right | + \left | \hat{L}_{S} - \mathbb{E}_{P^{S}} [\hat{L}_{S}] \right |
+        \end{aligned}
+      \end{equation}
+      where the last equality holds since the first term is zero (the estimator $\hat{L}_{T})$ is unbiased). We now proceed to
+      bound the three terms separately:
+
+      \begin{lemma}
+        Given $\delta > 0$, with probability at least $1 - \delta$, the term $\left | \hat{L}_{T} - \mathbb{E}_{P^T} [\hat{L}_{T}] \right |$ is
+        bounded by:
+        \begin{equation}
+          \left | \hat{L}_{T} - \mathbb{E}_{P^T} [\hat{L}_{T}] \right | \leq \frac{2\log(2/\delta)}{3(N+M)} + \sqrt{\frac{N\log(2/\delta)}{2(N+M)^{2}}}
+        \end{equation}
+        \label{lemma5}
+      \end{lemma}
+      \begin{proof}
+        From Bernstein's inequality, we know that:
+        \begin{equation}
+          P \left ( \left | \sum_{i=1}^{N} L_{i} - N\mathbb{E}_{P^{T}}[L] \right | > t \right ) < 2 exp \left ( -\frac{t^{2}/2}{N Var[L] + Ct/3} \right )
+        \end{equation}
+        By setting $t = (N+M)\epsilon$, we obtain:
+        \begin{equation}
+          P \left ( \left | \hat{L} - \mathbb{E}[\hat{L}] \right | > \epsilon \right ) < 2 exp \left ( -\frac{(N+M)^{2}\epsilon^{2}/2}{N Var[L] + (N+M)C \epsilon /3} \right )
+        \end{equation}
+        Notice that $C$, ie. the range of $L$, is 1, and, from Popoviciu's inequality, $Var[L] \leq 1/4$. By setting
+        the right-hand side equal to $\delta$ and solving for $\epsilon$, we obtain the desired result.
+      \end{proof}
+
+      \begin{lemma}
+        Given $\delta > 0$, with probability at least $1-\delta$, the term $\left | \hat{L}_{S} - \mathbb{E}_{P^S}[\hat{L}_{S}] \right |$
+        is bounded by:
+        \begin{equation}
+          \left | \hat{L}_{S} - \mathbb{E}_{P^S}[\hat{L}_{S}] \right | \leq \frac{2W\log(2/\delta)}{3(N+M)} + \sqrt{\frac{2MW^{2}\log(2/\delta)}{(N+M)^{2}}}
+        \end{equation}
+        \label{lemma6}
+      \end{lemma}
+      \begin{proof}
+        The proof follows straightforwardly from the one of Lemma \ref{lemma5}. Simply notice that now the range of $\tilde{w}_{p}(s')L(r,s')$
+        is $C = W$ and a trivial bound on its variance is $Var[\tilde{w}_{p}(s')L(r,s')] \leq W^{2}$.
+      \end{proof}
+
+      \begin{lemma}
+        The term $\left | \mathbb{E}_{P^S} [\hat{L}_{S}] - \frac{M}{N+M}\mu_{L} \right |$ is bounded by:
+        \begin{equation}
+          \left | \mathbb{E}_{P^S} [\hat{L}_{S}] - \frac{M}{N+M}\mu_{L} \right | \leq \frac{M}{N+M}
+        \end{equation}
+        \label{lemma7}
+      \end{lemma}
+      \begin{proof}
+        Notice that we can write:
+        \begin{equation}
+          \begin{aligned}
+            & \left | \mathbb{E}[\hat{L}_{S}] - \frac{M}{N+M}\mu_{L} \right | = \left | \frac{M}{N+M} \mathbb{E}[\tilde{w}_{p}(s')L(s')] - \frac{M}{M+N}\mu_{L} \right | \\
+            & \qquad = \frac{M}{N+M} | \mathbb{E}_{P^S}[\tilde{w}_{p}(s')L(s') - w_{p}(s')L(s')]|
+          \end{aligned}
+          \label{bound1}
+        \end{equation}
+
+        The latter term can be bound with:
+        \begin{equation}
+          \begin{aligned}
+            & |\mathbb{E}_{P^S}[\tilde{w}_{p}(s')L(s') - w_{p}(s')L(s')]| \\
+            & \qquad =    \left | \mathbb{E}_{P^{S}} \left [ \frac{\tilde{P}^{T}(s')}{\tilde{P}^{S}(s')}L(s') \right ] - \mathbb{E}_{P^{S}} \left [ \frac{P^{T}(s')}{P^{S}(s')}L(s') \right ] \right | \\
+            & \qquad \leq \left | \mathbb{E}_{P^{S}} \left [ \frac{\tilde{P}^{T}(s')}{\tilde{P}^{S}(s')}L(s') \right ] - \mathbb{E}_{P^{S}} \left [ \frac{\tilde{P}^{T}(s')}{P^{S}(s')}L(s') \right ] \right | \\
+            & \qquad + \left | \mathbb{E}_{P^{S}} \left [ \frac{\tilde{P}^{T}(s')}{P^{S}(s')}L(s') \right ] - \mathbb{E}_{P^{S}} \left [ \frac{P^{T}(s')}{P^{S}(s')}L(s') \right ] \right | \\
+            & \qquad = \left | \mathbb{E}_{P^{S}} \left [ \frac{\tilde{P}^{T}(s')}{\tilde{P}^{S}(s')P^{S}(s')} \left ( P^{S}(s')L(s') - \tilde{P}^{S}(s')L(s') \right ) \right ] \right | \\
+            & \qquad + \left | \mathbb{E}_{P^S} \left [ \frac{1}{P^{S}(s')} \left ( \tilde{P}^{T}(s')L(s') - P^{T}(s')L(s') \right ) \right ] \right | \\
+            & \qquad = \left | \int \tilde{w}_{p}(s') \left ( P^{S} (s') L(s') - \tilde{P}^{S}(s')L(s')\right ) ds' \right | \\
+            & \qquad + \left | \int \left ( P^{T}(s')L(s') - \tilde{P}^{T}(s')L(s') \right ) ds' \right | \\
+            & \qquad \leq 2W\mathcal{TV}(P^{S}||\tilde{P}^{S}) + 2\mathcal{TV}(P^{T}||\tilde{P}^{T})
+          \end{aligned}
+        \end{equation}
+        where $\mathcal{TV}$ denotes the \textit{total variation distance} between two probability measures. Remember that the
+        total variation can be written as:
+        \begin{equation}
+          \mathcal{TV}(p||q) = \frac{1}{2} \sup_{f:|f|<1} \left | \int (f(x)p(x) - f(x)q(x)) dx \right |
+        \end{equation}
+
+        \noindent This last equation can be further expanded by considering Pinsker's inequality:
+        \begin{equation}
+          \begin{aligned}
+            & 2W\mathcal{TV}(P^{S}||\tilde{P}^{S}) + 2\mathcal{TV}(P^{T}||\tilde{P}^{T}) \\
+            & \leq 2W \sqrt{\frac{1}{2} \mathcal{KL}(P^{S}||\tilde{P}^{S})} + 2\sqrt{\frac{1}{2}\mathcal{KL}(P^{T}||\tilde{P}^{T})} \\
+            & \leq 2W \sqrt{\frac{|\mu_{p,S} - \tilde{\mu}_{p,S}|^{2}}{4\sigma^{2}_{p}}} + 2\sqrt{\frac{|\mu_{p,T} - \tilde{\mu}_{p,T}|^{2}}{4\sigma^{2}_{p}}} \\
+            & \leq W \frac{|\mu_{p,S} - \tilde{\mu}_{p,S}|}{\sigma_{p}} + \frac{|\mu_{p,S} - \tilde{\mu}_{p,S}|}{\sigma_{p}}
+          \end{aligned}
+        \end{equation}
+        where $\mathcal{KL}$ is the Kullback-Leibler divergence. By combining the latter bound with Equation \ref{bound1} we obtain the
+        desired result.
+      \end{proof}
+
+      \noindent Finally, by combining the previous result we obtain the final result:
+      \begin{theorem}
+        Given $\delta > 0$, with probability at least $1-2\delta$:
+        \begin{equation}
+          \begin{aligned}
+            & \left | \hat{L}-\mu_{L} \right | \leq \frac{2\log(2/\delta)}{3(N+M)} + \sqrt{\frac{N\log(2/\delta)}{2(N+M)^{2}}} + \frac{2W\log(2/\delta)}{3(N+M)}+ \sqrt{\frac{2MW^{2}\log(2/\delta)}{(N+M)^{2}}} \\
+            & \qquad \quad + \frac{M}{N+M} \left ( W \frac{|\mu_{p,S} - \tilde{\mu}_{p,S}|}{\sigma_{p}} + \frac{|\mu_{p,S} - \tilde{\mu}_{p,S}|}{\sigma_{p}} \right )
+          \end{aligned}
+        \end{equation}
+      \end{theorem}
+      \begin{proof}
+        The proof is an immediate conseguence of Lemma \ref{lemma5}, \ref{lemma6} and \ref{lemma7}.
+      \end{proof}
+      \vspace{2cm}
+
+      \noindent The last bound is very loose but provides some useful insights. When the predictions of the GPs are
+      perfect and $M, N \rightarrow \infty$ then $|\hat{L}-\mu_{L}| \rightarrow 0$. In practice we have that when,
+      the number of source samples is sufficiently high, the predictions of the GPs precise and a good generalization
+      from the regressor used in WFQI, the bias introduced by the use of biased samples with estimated importance
+      weights is reasonably low.\newline
+
+      \noindent We could also consider the bias introduced by the use of $\hat{Q}^{1}(s,a)$ in place of the reward coming from the
+      experience sample. This error is composed of two parts: the first one is due to the generalization error introduced
+      by the specific regressor used in WFQI, the second part, again, is given by the use of estimated weights for the
+      reward model and can be studied with an analysis analogous to the one of the transition model. Notice this
+      bound does not provide any insight on how the errors propagate in different iterations of WFQI.\newline
+
+      \noindent The next chapter is devoted to the empirical validation of the theoretical results presented
+      so far. We observe how different number of source and target sample affects the performance of WFQI and
+      appears to be always respectful of the results obtained in this chapter.

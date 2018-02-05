@@ -1,0 +1,55 @@
+\chapter{Implementation}
+
+  \lettrine[lines=2]{I}n this appendix we describe in details the practical implementation that we used to obtain the results
+  of the experiments chapter. The main procedures are described in pseudo-code in order to obtain a more compact and abstract
+  representation of the main ideas.\newline
+
+  \noindent For reference the complete implementation, in Python 3.4, is available at: \newline \url{https://github.com/Sessa93/ifqi}. \newline
+
+  \noindent In the implementation there are 3 main important part:
+
+  \begin{enumerate}
+    \item \textbf{WFQI} (Algorithms \ref{fittedq} and \ref{fittedqw}): The class (W)FQI provides a general interface for a FQI implementation that abstracts
+      from the specific regressor used. In this case a pseudocode implementation of (W)FQI has been already proposed in chapters 4 and 6.
+      This abstraction permits to reuse the same interface to test different regressor implementation, this idea is not particularly
+      exploited in this thesis but may be particularly useful for more advanced implementation.\newline
+      Again the only differences in the implementation of FQI and WFQI is the use, in the latter, of importance weights. These differences
+      reflects in the structure of the single sample that now needs to include the weights for reward and transition model.
+
+    \item \textbf{Action Regressor} (algorithm \ref{actionalg}): The idea behind the use of an action regressor is, when the set of
+      action $\mathcal{A}$ is discrete and finite, to use a separate regressor for each action $a \in A$. Every time (W)FQI asks for a prediction
+      over a given sample, depending on the action specified by the sample the correct regressor is used.
+
+    \item \textbf{Regressor}: This class specify a generic interface for a regressor implementation. In our particular case this is specified
+      as an Extremely Randomized ensemble regressor (for the details refer to chapter 4). The interface provides two methods: $fit$ and $predict$,
+      the former permits to train the the regressor, the latter permits to obtain predictions for new data points.
+  \end{enumerate}
+
+  \begin{algorithm}[H]
+      \caption{Action Regressor}\label{actionalg}
+      \begin{algorithmic}[1]
+        \State $regressors \gets \{ \text{new} \quad regressor_{a} \quad \forall a \in \mathcal{A} \}$
+        \Procedure{fit($X, Y$)}{}
+          \For{$a \in \mathcal{A}$}
+            \State $i \gets X[1].indexOf(a)$
+            \State $regressors[i].fit(X[i,:],Y[i,:])$
+          \EndFor
+        \EndProcedure
+
+        \Procedure{predict}{$X$}
+          \For{$a \in \mathcal{A}$}
+            \State $i \gets X[1].indexOf(a)$
+            \State $regressors[i].predict(X[i,:])$
+          \EndFor
+        \EndProcedure
+      \end{algorithmic}
+  \end{algorithm}
+
+  \noindent For the implementation of the Extra Trees and GP regressors we refer to the standard implementation
+  available in the Scikit-learn \cite{scikit} library:
+  \begin{itemize}
+    \item \url{http://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.GaussianProcessRegressor.html}
+    \item \url{http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.ExtraTreesRegressor.html}
+  \end{itemize}
+
+  \blankpage

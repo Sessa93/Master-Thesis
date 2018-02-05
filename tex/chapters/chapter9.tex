@@ -1,0 +1,59 @@
+\chapter{Conclusions and Future Works}
+  \vspace{2cm}
+  \lettrine[lines=2]{T}he goal of our work was to provide an efficient way to perform the transfer
+  of samples from a set of source tasks to a target task with common state-action space.
+  We focus on the context of Batch Reinforcement Learning, and in particular in Fitted Q-Iteration.
+  We propose a transfer procedure based on the idea of importance sampling. We calculated a pair
+  of weights $w_p$ and $w_r$ for each source samples $(s,a,s',r)$ involved in the transfer. These
+  weights, according to the theory of importance sampling, were defined as the ratio between the
+  likelihood of observing a given reward/transition in the target task and the likelihood observing
+  a given reward/transition in the corresponding source task. A low importance weight indicates a sample
+  unlikely to be generated in the target task vice versa for a high importance weight.\newline
+  We studied different possibilities to inject these weights inside FQI: the first idea was to
+  consider an overall weight $w = w_p w_r$ and use a weighted regression inside FQI, weighting
+  each sample with $w$. This approach appeared to work but resulted to be very inefficient
+  in many scenarios. With inefficient we mean that the approach does not maximize the number of
+  transfer samples. For example, consider a scenario where the dynamics are shared between
+  the tasks but the reward models appear to be very different, thus the overall weight $w$
+  will, in general, be very low and therefore limiting the amount of transferred samples.
+  The considered final, and better, approach was to consider $w_r$ and $w_p$ separately and
+  inject them separately inside FQI. We used the reward weights only for the first iteration
+  and for the remaining ones only the transition weights, thus maximizing the number of
+  transferred samples also in situation similar to the one described before.\newline
+  Finally, we proposed a set of benchmarks to validate the performance of WFQI. We tested
+  our approach on a single and multiples source task scenarios where samples are transferred
+  first from each source task separately and then from all the source task at the same time.
+  We compared the expected return in the cases where we transfer different amount of samples
+  and when we transfer no sample at all. Our approach resulted to be successful in different
+  configurations environment being able to improve the performance using samples selected
+  from similar tasks. We also provided a theoretical analysis of WFQI in which we bounded the
+  error introduced by the use of biased (source) samples and we motivated our criterion to
+  obtain an accurate estimation of the importance weights.\newline
+
+  \noindent In the remaining part of this chapter we propose several guide lines for possible future works:
+  \begin{itemize}
+    \item \textbf{Weights Selection}: In Chapter 5 we proposed a possible way to deal with the estimation
+      of the importance weights, in particular we came up with the following estimator:
+      \begin{equation*}
+        \hat{w}(x) = \frac{\mathcal{N}(x; \mu_{GP,T}, \sigma^{2} + \sigma^{2}_{GP,T})}{\mathcal{N}(x; \mu_{GP,S}, \sigma^{2} + \sigma^{2}_{GP,S})}
+      \end{equation*}
+      while this estimator appears to work very well in practice (and converges to the true weights under ideal conditions)
+      we would like to obtain stronger theoretical properties on $\hat{w}$. A possible idea would be to understand some
+      properties of the real distribution of the reward/transition weights for a given sample. In particular
+      it would be interesting to understand the role of $\hat{w}$ in this distribution.\newline
+      Moreover the flexibility of our approach allow for very different approaches for the weights estimation, for
+      example by setting up an optimization problem with the objective of choosing the weight of each sample
+      minimizing the overall bias.
+    \item \textbf{Errors Propagation}: In Chapter 8 we discussed some of theoretical properties of Weighted Fitted Q-Iteration.
+      In particular we propose a bound on the bias on the loss function introduced by the use of source samples. One
+      limitation of this result is that it is local to one iteration of our learning procedure. A possible
+      development would be to understand how this local error propagates among different iterations of WFQI and
+      if this error indeed converges to zero when the number of source samples and the accuracy of the Gaussian
+      Processes increases.
+    \item \textbf{Algorithm Performance}: One of the main practical (from an algorithms perspective) limitations of WFQI is the use
+      of Gaussian Processes to get estimations of the reward and transition models. While, in practice, this approach
+      reveals to be very effective it does not permit our algorithm to scale when a large number of samples is required
+      to solve the task at hand (for example in possible application to Deep Reinforcement Learning, see \cite{mnih2015human}).
+      A possible way to proceed would be to study the use of alternative regressors with better time performance also
+      when a high number of samples is required.
+  \end{itemize}

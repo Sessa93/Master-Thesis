@@ -1,0 +1,111 @@
+% Author Andrea Sessa, 2017
+
+\documentclass[11pt, a4paper, twoside, openright, titlepage]{book}
+
+% List of packages
+\usepackage[center,a4,pdflatex,axes]{crop}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,italian]{babel}
+\usepackage{microtype}
+\usepackage[binding=5mm]{layaureo} % 5 mm binding
+
+\usepackage{changepage,calc}
+\usepackage{emptypage}
+\usepackage{indentfirst}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage[figuresright]{rotating}
+\usepackage{subfig}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage[font=small]{quoting}
+\usepackage{amsmath,amssymb}
+\usepackage{mathtools}
+\usepackage{amsthm}
+\usepackage[italian]{varioref}
+\usepackage{mparhack,fixltx2e}
+\usepackage{relsize}
+\usepackage[autostyle,italian=guillemets]{csquotes}
+\usepackage{times}
+\usepackage[style=numeric-comp,hyperref,backref,natbib,backend=biber,defernumbers=true]{biblatex}
+\usepackage[nottoc]{tocbibind} % Add bibliography to TOC
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{thmtools}
+\addbibresource{bibliography.bib} % Bibliography file
+\usepackage{hyperref}
+\usepackage{bookmark}
+\usepackage{guit}
+\usepackage{fancyhdr}
+\setlength{\headheight}{15pt}
+\usepackage[footnote,smaller,]{acronym}
+\usepackage{colortbl}
+\usepackage{multirow}
+\usepackage{pdfpages}
+\usepackage{lettrine}
+\usepackage{frontpagesty}
+\usepackage{thesisty}
+\usepackage[useregional]{datetime2}
+\usepackage[toc,page]{appendix}
+\usepackage{afterpage}
+\newcommand\blankpage{%
+    \null
+    \thispagestyle{empty}%
+    \addtocounter{page}{-1}%
+    \newpage}
+\usepackage{url}
+
+\renewcommand{\rmdefault}{pnc}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+
+
+% Document starts here
+
+\department{Dipartimento di Elettronica, Informatica e Bioingegneria}
+\course{Master of Science in Computer Science and Engineering}
+\student{Andrea Sessa}
+\title{Importance Sampling based Transfer in Reinforcement Learning}
+\supervisor{Marcello Restelli}
+\cosupervisor{Matteo Pirotta}
+\titleimage{images/logoPoliMi.png}
+\ayear{Academic Year 2016 - 2017}
+\matricola{850082}
+
+\begin{document}
+
+  \selectlanguage{english}
+  \maketitle
+
+  \input{front-material/dedica}
+  \input{front-material/acknowledgements}
+  \input{front-material/indexes}
+  \input{front-material/abstractEn}
+  \input{front-material/abstractIt}
+
+  \cleardoublepage
+
+
+  \input{chapters/chapter1}
+  \input{chapters/chapter2}
+  \input{chapters/chapter3}
+  %\input{chapters/chapter4}
+  \input{chapters/chapter5}
+  \input{chapters/chapter7}
+  \input{chapters/chapter8}
+  \input{chapters/chapter9}
+
+  \printbibliography
+
+  \begin{appendices}
+      \input{chapters/appendixA}
+      \input{chapters/appendixB}
+  \end{appendices}
+
+
+
+\end{document}

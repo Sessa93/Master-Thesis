@@ -1,0 +1,83 @@
+%% Copyright (C) 2017  Jamie Stevens, Luca Fossati, Andrea Sessa
+%%
+%%
+%%  This program is free software: you can redistribute it and/or modify
+%%  it under the terms of the GNU General Public License as published by
+%%  the Free Software Foundation, either version 3 of the License, or
+%%  (at your option) any later version.
+%%
+%%  This program is distributed in the hope that it will be useful,
+%%  but WITHOUT ANY WARRANTY; without even the implied warranty of
+%%  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%%  GNU General Public License for more details.
+%%
+%%  You should have received a copy of the GNU General Public License
+%%  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+%%
+
+\NeedsTeXFormat{LaTeX2e}[1994/06/01]
+\ProvidesPackage{thesisty}[20/2/2017 - Master thesis style v1.0]
+
+%% Set the font packages and options
+%% for better typesetting
+\RequirePackage{times}
+%\renewcommand{\familydefault}{\sfdefault}
+
+%% Set the options for the captions of figures,
+%% tables, etc.
+\RequirePackage{caption}
+\captionsetup{format=plain,indention=.5cm,singlelinecheck=false,labelfont=bf,textfont=it}
+
+%% change the equation number appearance
+%% load up the AMS math package
+\RequirePackage{amsmath}
+
+%% Definition of the definition environment
+\RequirePackage{amsthm}
+\newtheorem{defn}{Definition}[chapter]
+
+\makeatletter
+\def\cleardoublepage{\clearpage\if@twoside \ifodd\c@page\else
+	\hbox{}
+	\vspace*{\fill}
+	\thispagestyle{empty}
+	\newpage
+	\if@twocolumn\hbox{}\newpage\fi\fi\fi}
+\makeatother
+
+% Custom chapter title
+\RequirePackage[calcwidth]{titlesec}
+\titleformat{\chapter}[display]
+  {\fontshape{n}\fontsize{35pt}{11}\selectfont\bfseries}
+	{\filleft\chaptertitlename\hspace{0.3cm}\thechapter}
+  {100pt}
+	{\fontshape{n}\fontsize{25pt}{11}\selectfont\filright}
+
+%% Used to have big letters at the beginning of each Chapter
+\RequirePackage{type1cm}
+\RequirePackage{lettrine}
+\renewcommand{\LettrineFontHook}{\color[gray]{0.3}}
+\setcounter{DefaultLines}{3}
+\renewcommand{\DefaultLoversize}{0.25}
+\renewcommand{\DefaultLhang}{0.25}
+
+%% Now Lets customize the TOC
+\RequirePackage[subfigure,titles]{tocloft}
+%\setlength{\cftbeforechapskip}{2ex}
+%\setlength{\cftbeforesecskip}{0.5ex}
+
+
+\makeatletter
+\renewcommand{\@pnumwidth}{1.75em}
+\renewcommand{\@tocrmarg}{2.75em}
+\makeatother
+
+%% Finally here are the settings for the
+%% glossary
+\RequirePackage[toc]{glossaries}
+\newglossarystyle{thesisglossay}{%
+\glossarystyle{long}% base this style on the long style
+\renewcommand*{\glsgroupheading}[1]{%
+\textbf{\glsgetgrouptitle{##1}}\\}
+}
+\glossarystyle{thesisglossay}

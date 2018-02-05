@@ -1,0 +1,10 @@
+\defcounter {refsection}{0}\relax 
+\contentsline {algorithm}{\numberline {1}{\ignorespaces Fitted Q-Iteration algorithm\relax }}{27}{algorithm.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {algorithm}{\numberline {2}{\ignorespaces Weighted Fitted Q-Iteration algorithm\relax }}{44}{algorithm.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {algorithm}{\numberline {3}{\ignorespaces $w_r$ estimation algorithm\relax }}{56}{algorithm.3}
+\defcounter {refsection}{0}\relax 
+\contentsline {algorithm}{\numberline {4}{\ignorespaces $w_p$ estimation algorithm\relax }}{57}{algorithm.4}
+\defcounter {refsection}{0}\relax 
+\contentsline {algorithm}{\numberline {5}{\ignorespaces Action Regressor\relax }}{99}{algorithm.5}

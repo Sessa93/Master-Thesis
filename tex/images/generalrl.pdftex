@@ -1,0 +1,62 @@
+%% Creator: Inkscape inkscape 0.91, www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'general_rl.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{306.12278592bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,0.48984001)%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{general_rl.pdf}}%
+    \put(0.43681366,0.36955479){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{Agent}}}%
+    \put(0.34273363,0.09254182){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{Environment}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{general_rl.pdf}}%
+    \put(0.02913398,0.17094167){\color[rgb]{0,0,0}\rotatebox{90}{\makebox(0,0)[lb]{\smash{state $s_t$\\ \\ }}}}%
+    \put(0.10753391,0.14480837){\color[rgb]{0,0,0}\rotatebox{90}{\makebox(0,0)[lb]{\smash{reward $r_t$\\ \\ }}}}%
+    \put(0.9699329,0.33296823){\color[rgb]{0,0,0}\rotatebox{-90}{\makebox(0,0)[lb]{\smash{action $s_t$\\ \\ }}}}%
+    \put(0.2120671,0.17094176){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$r_{t+1}$}}}%
+    \put(0.2120671,0.01414191){\color[rgb]{0,0,0}\makebox(0,0)[lb]{\smash{$s_{t+1}$}}}%
+  \end{picture}%
+\endgroup%

@@ -1,0 +1,26 @@
+% Author Andrea Sessa
+
+\cleardoublepage
+
+% General index
+\pdfbookmark{\contentsname}{tableofcontents}
+\setcounter{tocdepth}{2}
+
+\tableofcontents
+
+\cleardoublepage
+
+% Figures index
+\phantomsection
+\pdfbookmark{\listfigurename}{lof}
+
+\listoffigures
+
+\cleardoublepage
+
+% Algorithms index
+\phantomsection
+\pdfbookmark{\listalgorithmname}{loa}
+\listofalgorithms
+\addcontentsline{toc}{chapter}{List of Algorithms}
+\cleardoublepage

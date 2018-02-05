@@ -1,0 +1,50 @@
+% Author Andrea Sessa
+
+\cleardoublepage
+\phantomsection
+
+\begingroup
+%\let\clearpage\relax
+\let\cleardoublepage\relax
+\let\cleardoublepage\relax
+
+\selectlanguage{english}
+%
+\pdfbookmark{Abstract}{Abstract}
+%
+\chapter*{Abstract}
+%
+\lettrine[lines=2]{I}n the recent years we have seen a general advance in the field of Artificial Intelligence.
+In particular Reinforcement learning (RL) has demonstrated itself as one of the most promising
+branch of machine learning especially in the last 20 years.\newline
+RL success is mostly due to its applicability in large and complex control
+problem (robotics, economics, AI and so on) where the high complexity of the models
+involved makes impossible, for the human designer, to design a complete and
+efficient model. In all these different scenarios RL techniques are able to provide a sufficiently
+accurate estimation of the model dynamics.\newline
+A major problem in Reinforcement Learning is represented by the amount of knowledge required to
+accurately train the agent in a specific environment.
+A possible approach to this problem is Transfer Learning. The idea is that if the agent has already
+solved a set of source tasks, then we can use this knowledge to speed-up the learning performance
+of the agent over the target task. Depending on the specific scenario the transferred knowledge can
+have different shapes and may require different hypothesis over the set of tasks involved.\newline
+We propose a sample-based approach for transfer learning in Batch RL based on the idea of Importance Sampling.
+For each experience sample collected from the set of the source tasks, we calculate a pair of importance
+weights $w_p$ and $w_r$. These weights can be interpreted as correction factors of the sample for
+reward ($w_r$) and transition ($w_p$) models. A low weight means a transition or reward generated
+in a source task has a very low probability to be observed in the target task and therefore
+very likely to negatively bias the learning performance (also referred as negative learning).
+On the other hand, a high weight value means that the sample reward or transition has a high likelihood
+to be generated in the target and therefore positively speed-up the learning performance.\newline
+We apply this idea to a specific batch RL algorithm, namely Fitted Q-Iteration (FQI), using the weights
+inside the regression algorithm obtaining Weighted Fitted Q-Iteration (WFQI). We provide a procedure to produce an accurate estimation of the weights
+for each sample. Moreover we also theoretically analyze the properties of our approach and we prove results
+bounding the amount of bias introduced by the use of source samples. Finally, we empirically validate WFQI over
+three different reinforcement learning classic benchmarks observing a significants improvements in terms of
+learning speeds and rejection of the negative transfer effect.
+
+\medskip
+
+\selectlanguage{english}
+%
+\endgroup

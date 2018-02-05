@@ -1,0 +1,49 @@
+% Author Andrea Sessa
+
+\cleardoublepage
+\phantomsection
+
+\begingroup
+%\let\clearpage\relax
+\let\cleardoublepage\relax
+\let\cleardoublepage\relax
+
+\selectlanguage{italian}
+%
+\pdfbookmark{Abstract}{ItAbstract}
+%
+\chapter*{Sommario}
+
+\lettrine[lines=2]{N}egli ultimi anni abbiamo visto un avanzamento generale nel campo dell' Intelligenza Artificiale.
+In particolare il campo dell'Apprendimento per Rinforzo (RL) ha dimostrato di essere uno dei più promettenti
+rami in Machine Learning degli ultimi 20 anni.\newline
+Il successo di RL è dovuto in larga parte alla sua applicabilità in grandi e complessi problemi
+di controllo (robotica, economia, AI etc.) dove l'alta complessità dei modelli coinvolti rende
+impossibile, per un designer umano, una progettazione completa ed efficiente. In tutte queste
+situazioni le tecniche di apprendimento per rinforzo  sono in grado di fornire una stima sufficientemente
+precisa di tutte le dinamiche del modello.\newline
+Uno dei principali problemi in RL è rappresentato dalla grande quantita di esperienza necessaria per un
+addestramento accurato dell'agente in uno specifico ambiente.
+Un possibile approccio è rappresentato dall'utilizzo di tecniche di Transfer Learning; l'idea è che se
+l'agente, in passato, ha già acquisito la conoscenza necessaria a risolvere un insieme di task sorgenti,
+questa conoscenza può essere riutilizzata per accelerare l'apprendimento su un dato task obiettivo.
+A seconda dello specifico scenario la conoscenza transferita può assume forme differenti e potrebbe
+richiedere differenti ipotesi sull'insieme di task coinvolti.\newline
+In questa tesi proponiamo un approccio per il transferimento di sample basato sull'idea dell'Importance
+Sampling. Per ogni campione proveniente dai task sorgenti calcoliamo un a coppia di pesi $w_r$ e $w_p$.
+Questi pesi possono essere interpretati come fattori di correzione dello specifico sample per rinforzo ($w_r$)
+e dinamica ($w_p$). Un peso di basso valore indica una transizione o rinforzo, generati in un task sorgente,
+con una bassa probabiltà di essere osservati nel task obiettivo e perciò estremamente incline a peggiorare
+la performance di apprendimento nel task medesimo (altrimenti noto come negative transfer). Dall'altro lato
+un peso di valore elevato ($\geq 1$) indica che il rinforzo o la dinamica del campione saranno verosimilmente
+osservabili all'interno del task obiettivo o perciò possa positivamente polarizzarne la performance di apprendimento.\newline
+In questo lavoro applichiamo questa ideal ad uno specifico algoritmo di batch reinforcement learning, precisamente Fitted Q-Iteration (FQI),
+usando i pesi all'interno dell'agoritmo di regressione ottenendo quello che chiamiamo Weighted Fitted Q-Iteration (WFQI).
+In questa tesi proponiamo un procedura per ottenere una stima accurata dei pesi. In aggiunta analizziamo il nostro approccio
+da un punto di vista teorico provando un risultato dove limitiamo il bias introdotto dall'uso di campioni sorgenti. Infine,
+validiamo empiricamente il nostro algoritmo su una serie di tre differenti benchmark osservando dei miglioramenti
+significativi in termini di velocità di appredimento e di reiezione dell'effetto del negative transfer.
+
+\selectlanguage{english}
+%
+\endgroup
